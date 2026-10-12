@@ -1,5 +1,7 @@
 # SpecFuzzer
 
+Team project built by Rohith Belede and Bhavana Ediga ([@bhavanagoud111](https://github.com/bhavanagoud111)).
+
 LLM-powered adversarial API test generator following the Ultrathink building style. Upload an OpenAPI spec, auto-generate three malicious test cases per endpoint, execute them, and review findings in a clean dashboard.
 
 ## Project Layout
@@ -79,3 +81,8 @@ TARGET_BASE_URL=https://api.example.com
 ## Model Adapter
 
 See `model/adapter.md` for instructions on wiring up the QLoRA adapter emitted from Colab fine-tuning. When the adapter is absent, the backend gracefully falls back to OpenAI as required by the safety note. The primary upload endpoint is `POST /upload_spec` (with `/upload` retained for backward compatibility).
+
+## Team
+
+- Rohith Belede
+- Bhavana Ediga ([@bhavanagoud111](https://github.com/bhavanagoud111))
