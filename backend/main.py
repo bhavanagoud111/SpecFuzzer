@@ -7,6 +7,7 @@ from typing import Optional
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
+from .config import settings
 from .executor import TestExecutor
 from .llm import generate_tests
 from .parser import SpecParseError, parse_openapi_document
@@ -22,7 +23,8 @@ app.add_middleware(
 
 
 def _resolve_base_url(explicit: Optional[str]) -> Optional[str]:
-    return explicit or os.getenv("TARGET_BASE_URL")
+    # settings reads .env; os.getenv covers variables exported in the shell.
+    return explicit or settings.target_base_url or os.getenv("TARGET_BASE_URL")
 
 
 @app.get("/health")

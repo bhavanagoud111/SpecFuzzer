@@ -5,7 +5,7 @@ import SummaryPanel from "./components/SummaryPanel";
 import TestResultsTable from "./components/TestResultsTable";
 import type { Report } from "./types";
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL;
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL ?? "http://127.0.0.1:8000";
 
 function App() {
   const [report, setReport] = useState<Report | null>(null);
@@ -45,9 +45,9 @@ function App() {
       <div className="card" style={{ marginBottom: "2rem" }}>
         <h1>SpecFuzzer</h1>
         <p style={{ color: "#475569", marginBottom: "1.5rem" }}>
-          Upload an OpenAPI spec and generate adversarial tests. The fine-tuned
-          Llama-2 adapter is used when available, otherwise the server falls back
-          to OpenAI automatically.
+          Upload an OpenAPI spec and generate adversarial tests. Tests come from
+          the configured OpenAI-compatible LLM endpoint, with built-in heuristic
+          tests used when the LLM call fails.
         </p>
         <UploadForm
           disabled={loading}

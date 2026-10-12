@@ -1,8 +1,10 @@
 """HTTP executor for running adversarial test cases."""
 from __future__ import annotations
 
+import re
 import time
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
+from urllib.parse import quote
 
 import requests
 
@@ -25,7 +27,8 @@ class TestExecutor:
                 error="No base URL configured for execution",
             )
 
-        url = f"{self.base_url}{case.path}" if case.path.startswith("/") else f"{self.base_url}/{case.path}"
+        path = _fill_path_params(case.path, case.payload)
+        url = f"{self.base_url}{path}" if path.startswith("/") else f"{self.base_url}/{path}"
         start = time.perf_counter()
         try:
             response = requests.request(
@@ -63,3 +66,21 @@ class TestExecutor:
         except ValueError:
             return response.text
 
+
+_PATH_PARAM = re.compile(r"\{([^{}/]+)\}")
+
+
+def _fill_path_params(path: str, payload: Dict[str, Any]) -> str:
+    """Replace OpenAPI path templates like /items/{id} with concrete values.
+
+    Uses a scalar value from the test payload when it has a key with the
+    parameter's name, otherwise a placeholder value of "1".
+    """
+
+    def _replace(match: "re.Match[str]") -> str:
+        value = payload.get(match.group(1)) if isinstance(payload, dict) else None
+        if value is None or isinstance(value, (dict, list)):
+            value = "1"
+        return quote(str(value), safe="")
+
+    return _PATH_PARAM.sub(_replace, path)

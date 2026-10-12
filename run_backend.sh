@@ -16,6 +16,10 @@ source "$VENV_PATH/bin/activate"
 
 pip install -r backend/requirements.txt
 
-python -m backend.dev_llm_smoke_test
+# The smoke test needs LLM credentials; don't let a failure stop the server
+# from starting (the backend falls back to heuristic tests without an LLM).
+if ! python -m backend.dev_llm_smoke_test; then
+  echo "Warning: LLM smoke test failed (check LLM_* settings in .env). Starting the server anyway." >&2
+fi
 
 uvicorn backend.main:app --reload --port 8000
